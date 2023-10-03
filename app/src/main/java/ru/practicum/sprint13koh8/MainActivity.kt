@@ -111,22 +111,53 @@ class MainActivity : AppCompatActivity() {
             onAddCountClickListener = OnAddCountClickListener { item ->
                 catalogItems = catalogItems.map {
                     if (it.id == item.id) {
+
+
+                        cartItems = cartItems.map {
+                            if (it.catalogItem.id == item.id) {
+                                it.copy(count = it.count + 1)
+                            } else {
+                                it
+                            }
+                        }
+
+
                         it.copy(count = (it.count ?: 0) + 1)
                     } else {
                         it
                     }
                 }
                 catalogItemsAdapter.setItems(catalogItems)
+                cartItemsAdapter.setItems(cartItems)
             }
             onRemoveCountClickListener = OnRemoveCountClickListener { item ->
                 catalogItems = catalogItems.map {
                     if (it.id == item.id) {
+                        if (item.count == 1) {
+                            cartItems = cartItems.toMutableList().apply {
+                                remove(
+                                    cartItems.find { it.catalogItem.id == item.id }
+                                )
+                                //binding.
+                            }
+                        }
+                        cartItems = cartItems.map {
+                            if (it.catalogItem.id == item.id) {
+                                it.copy(count = it.count - 1)
+                            } else {
+                                it
+                            }
+                        }
                         it.copy(count = (it.count ?: 0) - 1)
+
                     } else {
                         it
                     }
                 }
+                cartItemsAdapter.setItems(cartItems)
                 catalogItemsAdapter.setItems(catalogItems)
+
+
             }
         }
     }
@@ -143,22 +174,45 @@ class MainActivity : AppCompatActivity() {
             onAddCountClickListener = OnCartAddCountClickListener { item ->
                 cartItems = cartItems.map {
                     if (it.id == item.id) {
+                        catalogItems = catalogItems.map {
+                            if (it.id == item.catalogItem.id) {
+                                it.copy(count = (it.count ?: 0) + 1)
+                            } else {
+                                it
+                            }
+                        }
                         it.copy(count = it.count + 1)
                     } else {
                         it
                     }
                 }
                 cartItemsAdapter.setItems(cartItems)
+                catalogItemsAdapter.setItems(catalogItems)
             }
             onRemoveCountClickListener = OnCartRemoveCountClickListener { item ->
-                cartItems = cartItems.map {
+                cartItems = cartItems.mapNotNull {
                     if (it.id == item.id) {
-                        it.copy(count = it.count - 1)
+
+
+                        catalogItems = catalogItems.map {
+                            if (it.id == item.catalogItem.id) {
+                                it.copy(count = (it.count ?: 0) - 1)
+                            } else {
+                                it
+                            }
+                        }
+                        if (it.count == 1) {
+                            null
+                        } else {
+                            it.copy(count = it.count - 1)
+                        }
                     } else {
                         it
                     }
                 }
+
                 cartItemsAdapter.setItems(cartItems)
+                catalogItemsAdapter.setItems(catalogItems)
             }
         }
     }
@@ -183,11 +237,13 @@ class MainActivity : AppCompatActivity() {
         if (newScreenMode != currentScreenMode) {
             when (newScreenMode) {
                 ScreenMode.CATALOG -> {
+                    binding.toolbar.setTitle(R.string.catalog_title)
                     binding.catalogContainer.visibility = View.VISIBLE
                     binding.cartContainer.visibility = View.GONE
                 }
 
                 ScreenMode.CART -> {
+                    binding.toolbar.setTitle(R.string.cart_title)
                     binding.catalogContainer.visibility = View.GONE
                     binding.cartContainer.visibility = View.VISIBLE
                 }
