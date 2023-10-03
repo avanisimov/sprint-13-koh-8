@@ -111,21 +111,41 @@ class MainActivity : AppCompatActivity() {
             onAddCountClickListener = OnAddCountClickListener { item ->
                 catalogItems = catalogItems.map {
                     if (it.id == item.id) {
+
+
+                        cartItems = cartItems.map {
+                            if (it.catalogItem.id == item.id) {
+                                it.copy(count = it.count + 1)
+                            } else {
+                                it
+                            }
+                        }
+
+
                         it.copy(count = (it.count ?: 0) + 1)
                     } else {
                         it
                     }
                 }
                 catalogItemsAdapter.setItems(catalogItems)
+                cartItemsAdapter.setItems(cartItems)
             }
             onRemoveCountClickListener = OnRemoveCountClickListener { item ->
                 catalogItems = catalogItems.map {
                     if (it.id == item.id) {
-                        if(item.count == 1){
+                        if (item.count == 1) {
                             cartItems = cartItems.toMutableList().apply {
                                 remove(
-                                    cartItems.find { it.catalogItem.id == item.id  }
+                                    cartItems.find { it.catalogItem.id == item.id }
                                 )
+                                //binding.
+                            }
+                        }
+                        cartItems = cartItems.map {
+                            if (it.catalogItem.id == item.id) {
+                                it.copy(count = it.count - 1)
+                            } else {
+                                it
                             }
                         }
                         it.copy(count = (it.count ?: 0) - 1)
@@ -136,6 +156,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 cartItemsAdapter.setItems(cartItems)
                 catalogItemsAdapter.setItems(catalogItems)
+
 
             }
         }
@@ -153,22 +174,45 @@ class MainActivity : AppCompatActivity() {
             onAddCountClickListener = OnCartAddCountClickListener { item ->
                 cartItems = cartItems.map {
                     if (it.id == item.id) {
+                        catalogItems = catalogItems.map {
+                            if (it.id == item.catalogItem.id) {
+                                it.copy(count = (it.count ?: 0) + 1)
+                            } else {
+                                it
+                            }
+                        }
                         it.copy(count = it.count + 1)
                     } else {
                         it
                     }
                 }
                 cartItemsAdapter.setItems(cartItems)
+                catalogItemsAdapter.setItems(catalogItems)
             }
             onRemoveCountClickListener = OnCartRemoveCountClickListener { item ->
-                cartItems = cartItems.map {
+                cartItems = cartItems.mapNotNull {
                     if (it.id == item.id) {
-                        it.copy(count = it.count - 1)
+
+
+                        catalogItems = catalogItems.map {
+                            if (it.id == item.catalogItem.id) {
+                                it.copy(count = (it.count ?: 0) - 1)
+                            } else {
+                                it
+                            }
+                        }
+                        if (it.count == 1) {
+                            null
+                        } else {
+                            it.copy(count = it.count - 1)
+                        }
                     } else {
                         it
                     }
                 }
+
                 cartItemsAdapter.setItems(cartItems)
+                catalogItemsAdapter.setItems(catalogItems)
             }
         }
     }
