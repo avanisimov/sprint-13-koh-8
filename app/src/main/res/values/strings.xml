@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Sprint13koh03</string>
+    <string name="catalog_title">Каталог</string>
+    <string name="cart_title">Корзина</string>
+    <string name="cart_empty">Корзина пуста</string>
+    <string name="catalog_item_add">в корзину</string>
+</resources>
