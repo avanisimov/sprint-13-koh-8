@@ -183,11 +183,13 @@ class MainActivity : AppCompatActivity() {
         if (newScreenMode != currentScreenMode) {
             when (newScreenMode) {
                 ScreenMode.CATALOG -> {
+                    binding.toolbar.setTitle(R.string.catalog_title)
                     binding.catalogContainer.visibility = View.VISIBLE
                     binding.cartContainer.visibility = View.GONE
                 }
 
                 ScreenMode.CART -> {
+                    binding.toolbar.setTitle(R.string.cart_title)
                     binding.catalogContainer.visibility = View.GONE
                     binding.cartContainer.visibility = View.VISIBLE
                 }
