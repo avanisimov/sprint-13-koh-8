@@ -33,6 +33,7 @@ class CartItemViewHolder(
         Glide
             .with(binding.root.context)
             .load(item.catalogItem.imageUrl)
+            .centerCrop()
             .into(binding.image)
         binding.title.text = item.catalogItem.name
 
