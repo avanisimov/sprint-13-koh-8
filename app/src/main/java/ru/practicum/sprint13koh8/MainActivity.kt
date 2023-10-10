@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
             onBottomNavigationItemSelected(it.itemId)
         }
 
+
         setUpCatalog()
         setUpCart()
 
@@ -101,6 +102,7 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
                         cartItemsAdapter.setItems(cartItems)
+                        changeVisibilityOfEmptyBasketTitle()
                         it.copy(count = 1)
                     } else {
                         it
@@ -111,8 +113,6 @@ class MainActivity : AppCompatActivity() {
             onAddCountClickListener = OnAddCountClickListener { item ->
                 catalogItems = catalogItems.map {
                     if (it.id == item.id) {
-
-
                         cartItems = cartItems.map {
                             if (it.catalogItem.id == item.id) {
                                 it.copy(count = it.count + 1)
@@ -156,13 +156,13 @@ class MainActivity : AppCompatActivity() {
                 }
                 cartItemsAdapter.setItems(cartItems)
                 catalogItemsAdapter.setItems(catalogItems)
-
-
+                changeVisibilityOfEmptyBasketTitle()
             }
         }
     }
 
     private fun setUpCart() {
+        changeVisibilityOfEmptyBasketTitle()
         binding.cartItemsList.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = cartItemsAdapter
@@ -210,9 +210,9 @@ class MainActivity : AppCompatActivity() {
                         it
                     }
                 }
-
                 cartItemsAdapter.setItems(cartItems)
                 catalogItemsAdapter.setItems(catalogItems)
+                changeVisibilityOfEmptyBasketTitle()
             }
         }
     }
@@ -230,6 +230,14 @@ class MainActivity : AppCompatActivity() {
             }
 
             else -> false
+        }
+    }
+
+    private fun changeVisibilityOfEmptyBasketTitle() {
+        if (cartItems.isEmpty()) {
+            binding.cartEmptyTitle.visibility = View.VISIBLE
+        } else {
+            binding.cartEmptyTitle.visibility = View.GONE
         }
     }
 
