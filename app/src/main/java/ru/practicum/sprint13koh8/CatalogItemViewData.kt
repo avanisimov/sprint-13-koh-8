@@ -34,7 +34,12 @@ class CatalogItemViewHolder(
             .centerCrop()
             .into(binding.image)
         binding.title.text = viewData.item.name
-        binding.price.text = "${viewData.item.price / 100}/${viewData.item.unit}"
+
+        val priceInKopecks = viewData.item.price
+        val rubles = priceInKopecks / 100
+        val kopecks = priceInKopecks % 100
+
+        binding.price.text = "${rubles}, ${kopecks}${" "}${"P/"}${viewData.item.unit}"
 
         if (viewData.count != null) {
             binding.addToCart.visibility = View.GONE
