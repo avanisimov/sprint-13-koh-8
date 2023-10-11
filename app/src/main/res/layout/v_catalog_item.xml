@@ -29,11 +29,15 @@
 
             <TextView
                 android:id="@+id/price"
+                android:paddingStart="@dimen/margin_2dp"
+                android:paddingEnd="@dimen/margin_2dp"
+                android:paddingTop="@dimen/margin_2dp"
+                android:paddingBottom="@dimen/margin_2dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginHorizontal="8dp"
-                android:background="#666"
+                android:background="@drawable/rounded_background"
                 android:textColor="@color/white" />
 
             <com.google.android.material.button.MaterialButton
