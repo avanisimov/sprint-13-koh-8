@@ -7,11 +7,14 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import ru.practicum.sprint13koh8.databinding.ActivityMainBinding
 import java.util.UUID
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,6 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     // UI
     private lateinit var binding: ActivityMainBinding
+    private lateinit var badge: BadgeDrawable
     private val catalogItemsAdapter: CatalogItemsAdapter by lazy {
         CatalogItemsAdapter()
     }
@@ -48,6 +52,11 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.setOnItemSelectedListener {
             onBottomNavigationItemSelected(it.itemId)
         }
+
+        val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_navigation)
+        badge =
+            bottomNavigationView.getOrCreateBadge(R.id.cart) // ID вашего элемента нижней навигации
+        badge.isVisible = false
 
         setUpCatalog()
         setUpCart()
@@ -101,18 +110,18 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
                         cartItemsAdapter.setItems(cartItems)
+                        changeVisibilityOfEmptyBasketTitle()
                         it.copy(count = 1)
                     } else {
                         it
                     }
                 }
+                setBudgeCount()
                 catalogItemsAdapter.setItems(catalogItems)
             }
             onAddCountClickListener = OnAddCountClickListener { item ->
                 catalogItems = catalogItems.map {
                     if (it.id == item.id) {
-
-
                         cartItems = cartItems.map {
                             if (it.catalogItem.id == item.id) {
                                 it.copy(count = it.count + 1)
@@ -138,7 +147,6 @@ class MainActivity : AppCompatActivity() {
                                 remove(
                                     cartItems.find { it.catalogItem.id == item.id }
                                 )
-                                //binding.
                             }
                         }
                         cartItems = cartItems.map {
@@ -154,15 +162,25 @@ class MainActivity : AppCompatActivity() {
                         it
                     }
                 }
+                setBudgeCount()
                 cartItemsAdapter.setItems(cartItems)
                 catalogItemsAdapter.setItems(catalogItems)
-
-
+                changeVisibilityOfEmptyBasketTitle()
             }
         }
     }
 
+    private fun setBudgeCount() {
+        if (cartItems.isNotEmpty()) {
+            badge.isVisible = true
+            badge.number = cartItems.size
+        } else {
+            badge.isVisible = false
+        }
+    }
+
     private fun setUpCart() {
+        changeVisibilityOfEmptyBasketTitle()
         binding.cartItemsList.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = cartItemsAdapter
@@ -210,9 +228,10 @@ class MainActivity : AppCompatActivity() {
                         it
                     }
                 }
-
+                setBudgeCount()
                 cartItemsAdapter.setItems(cartItems)
                 catalogItemsAdapter.setItems(catalogItems)
+                changeVisibilityOfEmptyBasketTitle()
             }
         }
     }
@@ -230,6 +249,14 @@ class MainActivity : AppCompatActivity() {
             }
 
             else -> false
+        }
+    }
+
+    private fun changeVisibilityOfEmptyBasketTitle() {
+        if (cartItems.isEmpty()) {
+            binding.cartEmptyTitle.visibility = View.VISIBLE
+        } else {
+            binding.cartEmptyTitle.visibility = View.GONE
         }
     }
 
